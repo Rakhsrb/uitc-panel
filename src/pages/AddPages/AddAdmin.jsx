@@ -1,16 +1,12 @@
 import { Eye, EyeClosed } from "@phosphor-icons/react";
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
+import { Axios } from "../../middlewares/Axios";
 
 const AddAdmin = () => {
   const [showPass, setShowPass] = useState(false);
-  const { baseUrlApi, config } = useSelector(
-    (state) => state.mainSlice
-  );
-    const { isAuth } = useSelector((state) => state.user);
+  const { isAuth } = useSelector((state) => state.user);
 
   const [adminData, setAdminData] = useState({
     name: "",
@@ -37,24 +33,13 @@ const AddAdmin = () => {
       password: adminData.password,
     };
     try {
-      const response = await axios.post(
-        baseUrlApi + "api/admin/create",
-        adminForm,
-        config
-      );
+      const response = await Axios.post("admin/create", adminForm);
       setAdminData({
         name: "",
         email: "",
         password: "",
       });
       navigate("/admins");
-      Swal.fire({
-        position: "top-end",
-        icon: "success",
-        title: "Yangi Admin Qo'shildi",
-        showConfirmButton: false,
-        timer: 3500,
-      });
     } catch (error) {
       console.log(error);
     }

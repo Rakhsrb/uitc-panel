@@ -1,11 +1,10 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import { Axios } from "../../middlewares/Axios";
 
 const EditService = () => {
   const path = useNavigate();
-  const { baseUrlApi, config } = useSelector((state) => state.mainSlice);
   const { id } = useParams();
   const [isPending, setIsPending] = useState(false);
   const [serviceData, setServiceData] = useState({
@@ -24,8 +23,7 @@ const EditService = () => {
   useEffect(() => {
     async function getDataById() {
       try {
-        const { data } = (await axios.get(baseUrlApi + `api/services/${id}`))
-          .data;
+        const { data } = (await Axios.get(`services/${id}`)).data;
         setServiceData(data);
       } catch (error) {
         console.log(error);
@@ -46,11 +44,7 @@ const EditService = () => {
     e.preventDefault();
     setIsPending(true);
     try {
-      const response = await axios.put(
-        baseUrlApi + `api/services/update/${id}`,
-        serviceData,
-        config
-      );
+      const response = await Axios.put(`services/update/${id}`, serviceData);
       path("/services");
     } catch (error) {
       console.log(error);

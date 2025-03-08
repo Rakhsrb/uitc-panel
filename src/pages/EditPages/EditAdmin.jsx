@@ -1,14 +1,10 @@
-import { Eye, EyeClosed } from "@phosphor-icons/react";
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import "sweetalert2/src/sweetalert2.scss";
+import { Axios } from "../../middlewares/Axios";
 
 const EditAdmin = () => {
-  const [showPass, setShowPass] = useState(false);
   const path = useNavigate();
-  const { baseUrlApi, config } = useSelector((state) => state.mainSlice);
   const { id } = useParams();
   const [adminData, setAdminData] = useState({
     name: "",
@@ -26,10 +22,7 @@ const EditAdmin = () => {
   useEffect(() => {
     async function getDataById() {
       try {
-        const response = await axios.get(
-          baseUrlApi + `api/admin/${id}`,
-          config
-        );
+        const response = await Axios.get(`admin/${id}`);
         setAdminData(response.data.data);
       } catch (error) {
         console.log(error);
@@ -49,11 +42,7 @@ const EditAdmin = () => {
   const submitUpdatedInfo = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(
-        baseUrlApi + `api/admin/update/${id}`,
-        adminData,
-        config
-      );
+      const response = await Axios.put(`admin/update/${id}`, adminData);
       path("/admins");
     } catch (error) {
       console.log(error);
@@ -100,29 +89,6 @@ const EditAdmin = () => {
               onChange={getUpdatedValues}
             />
           </div>
-          {/* <div className="flex flex-col gap-2">
-            <label htmlFor="adminPassword" className="text-lg">
-              Parolni tasdiqlang:
-            </label>
-            <div className="border py-1 px-5 text-lg flex items-center gap-3">
-              <input
-                required
-                type={showPass ? "text" : "password"}
-                placeholder="Parol kiriting"
-                className="outline-none w-full"
-                name="password"
-                id="adminPassword"
-                onChange={getUpdatedValues}
-              />
-              <span
-                onClick={() =>
-                  showPass ? setShowPass(false) : setShowPass(true)
-                }
-              >
-                {showPass ? <Eye /> : <EyeClosed />}
-              </span>
-            </div>
-          </div> */}
         </div>
         <button
           type="submit"

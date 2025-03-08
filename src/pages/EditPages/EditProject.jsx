@@ -1,11 +1,10 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import { Axios } from "../../middlewares/Axios";
 
 const EditProject = () => {
   const path = useNavigate();
-  const { baseUrlApi, config } = useSelector((state) => state.mainSlice);
   const { id } = useParams();
   const [imgSaved, setImgSaved] = useState(false);
   const [portfolioData, setPortfolioData] = useState({
@@ -23,7 +22,7 @@ const EditProject = () => {
   useEffect(() => {
     async function getDataById() {
       try {
-        const response = await axios.get(baseUrlApi + `api/projects/${id}`);
+        const response = await Axios.get(`projects/${id}`);
         setPortfolioData(response.data.data);
       } catch (error) {
         console.log(error);
@@ -45,11 +44,7 @@ const EditProject = () => {
     e.preventDefault();
     try {
       setImgSaved(true);
-      const response = await axios.put(
-        baseUrlApi + `api/projects/update/${id}`,
-        portfolioData,
-        config
-      );
+      const response = await Axios.put(`projects/update/${id}`, portfolioData);
       setImgSaved(false);
       path("/projects");
     } catch (error) {
@@ -65,11 +60,7 @@ const EditProject = () => {
         formImageData.append("images", files[i]);
       }
       setImgSaved(true);
-      const { data } = await axios.post(
-        baseUrlApi + "api/upload",
-        formImageData,
-        config
-      );
+      const { data } = await Axios.post("upload", formImageData);
       setPortfolioData((prevFormData) => ({
         ...prevFormData,
         images: [...prevFormData.images, ...data.images],

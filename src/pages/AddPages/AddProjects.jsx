@@ -1,13 +1,10 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
+import { Axios } from "../../middlewares/Axios";
 
 const EditProject = () => {
   const navigate = useNavigate();
-
-  const { baseUrlApi, config } = useSelector((state) => state.mainSlice);
 
   const { isAuth } = useSelector((state) => state.user);
 
@@ -45,11 +42,7 @@ const EditProject = () => {
 
       setIsPending(true);
 
-      const { data } = await axios.post(
-        baseUrlApi + "api/upload",
-        formImageData,
-        config
-      );
+      const { data } = await Axios.post("upload", formImageData);
 
       setPortfolioData((prevFormData) => ({
         ...prevFormData,
@@ -65,11 +58,7 @@ const EditProject = () => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        baseUrlApi + "api/projects/create",
-        portfolioData,
-        config
-      );
+      const response = await Axios.post("projects/create", portfolioData);
       setPortfolioData({
         title: "",
         description: "",
@@ -78,13 +67,6 @@ const EditProject = () => {
         images: [],
       });
       navigate("/projects");
-      Swal.fire({
-        position: "top-end",
-        icon: "success",
-        title: "Yangi Loyiha Qo'shildi",
-        showConfirmButton: false,
-        timer: 3500,
-      });
     } catch (error) {
       console.error("Error adding form:", error);
     }

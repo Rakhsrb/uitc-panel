@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const NotFound = () => {
-  const nf = localStorage.getItem("token") || false;
+  const nf = localStorage.getItem("uitctoken") || false;
   return (
     <section className="h-screen flex flex-col justify-center items-center bg-blue-50 fixed w-screen gap-7">
       <h1 className="text-5xl text-white">Page not found</h1>

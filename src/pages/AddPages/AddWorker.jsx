@@ -1,11 +1,9 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
+import { Axios } from "../../middlewares/Axios";
 
 const AddWorker = () => {
-  const { baseUrlApi, config } = useSelector((state) => state.mainSlice);
   const [imgSaved, setImgSaved] = useState(false);
   const [workerData, setWorkerData] = useState({
     name: "",
@@ -32,24 +30,13 @@ const AddWorker = () => {
   const sendWorker = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        baseUrlApi + "api/team/create",
-        workerData,
-        config
-      );
+      const response = await Axios.post("team/create", workerData);
       setWorkerData({
         name: "",
         job: "",
         image: "",
       });
       navigate("/team");
-      Swal.fire({
-        position: "top-end",
-        icon: "success",
-        title: "Yangi Xodim Qo'shildi",
-        showConfirmButton: false,
-        timer: 3500,
-      });
     } catch (error) {
       console.log(error);
     }
@@ -61,11 +48,7 @@ const AddWorker = () => {
       const file = e.target.files[0];
       formImageData.append("images", file);
       setImgSaved(true);
-      const { data } = await axios.post(
-        baseUrlApi + "api/upload",
-        formImageData,
-        config
-      );
+      const { data } = await Axios.post("upload", formImageData);
       setWorkerData((prevWorker) => ({
         ...prevWorker,
         image: data.images[0],

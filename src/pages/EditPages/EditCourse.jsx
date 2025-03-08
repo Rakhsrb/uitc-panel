@@ -1,11 +1,10 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import { Axios } from "../../middlewares/Axios";
 
 const EditCourse = () => {
   const path = useNavigate();
-  const { baseUrlApi, config } = useSelector((state) => state.mainSlice);
   const { id } = useParams();
   const [imgSaved, setImgSaved] = useState(false);
   const [isPending, setIsPending] = useState(false);
@@ -23,7 +22,7 @@ const EditCourse = () => {
     async function getDataById() {
       try {
         setIsPending(true);
-        const response = await axios.get(baseUrlApi + `api/courses/${id}`);
+        const response = await Axios.get(`courses/${id}`);
         setCourseData(response.data.data);
         setIsPending(false);
       } catch (error) {
@@ -47,11 +46,7 @@ const EditCourse = () => {
     e.preventDefault();
     try {
       setImgSaved(true);
-      const response = await axios.put(
-        baseUrlApi + `api/courses/update/${id}`,
-        courseData,
-        config
-      );
+      const response = await Axios.put(`courses/update/${id}`, courseData);
       path("/courses");
       setImgSaved(false);
     } catch (error) {
@@ -66,11 +61,7 @@ const EditCourse = () => {
       const file = e.target.files[0];
       formImageData.append("images", file);
       setImgSaved(true);
-      const { data } = await axios.post(
-        baseUrlApi + "api/upload",
-        formImageData,
-        config
-      );
+      const { data } = await Axios.post("upload", formImageData);
       setCourseData((prevCourse) => ({
         ...prevCourse,
         image: data.images[0],

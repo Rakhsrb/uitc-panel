@@ -1,11 +1,10 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import { Axios } from "../../middlewares/Axios";
 
 const EditWorker = () => {
   const path = useNavigate();
-  const { baseUrlApi, config } = useSelector((state) => state.mainSlice);
   const { id } = useParams();
   const [imgSaved, setImgSaved] = useState(false);
   const [isPending, setIsPending] = useState(false);
@@ -26,7 +25,7 @@ const EditWorker = () => {
   useEffect(() => {
     async function getDataById() {
       try {
-        const response = await axios.get(baseUrlApi + `api/team/${id}`);
+        const response = await Axios.get(`team/${id}`);
         setWorkerData(response.data.data);
       } catch (error) {
         console.log(error);
@@ -48,11 +47,7 @@ const EditWorker = () => {
     e.preventDefault();
     try {
       setImgSaved(true);
-      const response = await axios.put(
-        baseUrlApi + `api/team/update/${id}`,
-        workerData,
-        config
-      );
+      const response = await Axios.put(`team/update/${id}`, workerData);
       setImgSaved(false);
       path("/team");
     } catch (error) {
@@ -66,11 +61,7 @@ const EditWorker = () => {
       const file = e.target.files[0];
       formImageData.append("images", file);
       setImgSaved(true);
-      const { data } = await axios.post(
-        baseUrlApi + "api/upload",
-        formImageData,
-        config
-      );
+      const { data } = await Axios.post("upload", formImageData);
       setWorkerData((prevCourse) => ({
         ...prevCourse,
         image: data.images[0],

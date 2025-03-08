@@ -1,19 +1,15 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
+import { Axios } from "../../middlewares/Axios";
 
 const AddServices = () => {
-  const { baseUrlApi, config } = useSelector((state) => state.mainSlice);
-
-  
   const [imgSaved, setImgSaved] = useState(false);
   const [serviceData, setServiceData] = useState({
     title: "",
     description: "",
   });
-  
+
   const navigate = useNavigate();
   const { isAuth } = useSelector((state) => state.user);
 
@@ -32,20 +28,13 @@ const AddServices = () => {
     e.preventDefault();
     try {
       setImgSaved(true);
-      await axios.post(baseUrlApi + "api/services/create", serviceData, config);
+      await Axios.post("services/create", serviceData);
       setServiceData({
         title: "",
         description: "",
       });
       setImgSaved(false);
       navigate("/services");
-      Swal.fire({
-        position: "top-end",
-        icon: "success",
-        title: "Yangi Xizmat Qo'shildi",
-        showConfirmButton: false,
-        timer: 3500,
-      });
     } catch (error) {
       console.log(error);
     }

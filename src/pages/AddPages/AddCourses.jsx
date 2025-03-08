@@ -1,12 +1,9 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
+import { Axios } from "../../middlewares/Axios";
 
 const AddCourses = () => {
-  const { baseUrlApi, config } = useSelector((state) => state.mainSlice);
-
   const { isAuth } = useSelector((state) => state.user);
 
   const [imgSaved, setImgSaved] = useState(false);
@@ -36,11 +33,7 @@ const AddCourses = () => {
       const file = e.target.files[0];
       formImageData.append("images", file);
       setImgSaved(true);
-      const { data } = await axios.post(
-        baseUrlApi + "api/upload",
-        formImageData,
-        config
-      );
+      const { data } = await Axios.post("upload", formImageData);
       setCourseData((prevCourse) => ({
         ...prevCourse,
         image: data.images[0],
@@ -60,11 +53,7 @@ const AddCourses = () => {
       price: courseData.price,
     };
     try {
-      const response = await axios.post(
-        baseUrlApi + "api/courses/create",
-        courseForm,
-        config
-      );
+      const response = await Axios.post("courses/create", courseForm);
       setCourseData({
         title: "",
         description: "",
@@ -72,13 +61,6 @@ const AddCourses = () => {
         price: "",
       });
       navigate("/courses");
-      Swal.fire({
-        position: "top-end",
-        icon: "success",
-        title: "Yangi Kurs Qo'shildi",
-        showConfirmButton: false,
-        timer: 3500,
-      });
     } catch (error) {
       console.log(error);
     }
