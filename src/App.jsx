@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { RootLayout } from "./layout/RootLayout";
@@ -26,8 +26,9 @@ import {
   getUserPending,
   getUserSuccess,
 } from "./toolkit/UserSlicer";
+import { Loading } from "./pages/Loading";
 function App() {
-  const { isAuth } = useSelector((state) => state.user);
+  const { isAuth, isPending } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -41,11 +42,20 @@ function App() {
       }
     };
     fetchData();
-  }, []);
+  }, [dispatch]);
 
-  const router = createBrowserRouter([
-    isAuth
-      ? {
+  const router = useMemo(() => {
+    if (isPending) {
+      return createBrowserRouter([
+        {
+          path: "/",
+          element: <Loading />,
+        },
+      ]);
+    }
+    if (isAuth) {
+      return createBrowserRouter([
+        {
           path: "/",
           element: <RootLayout />,
           children: [
@@ -125,16 +135,22 @@ function App() {
               element: <Project />,
             },
           ],
-        }
-      : {
+        },
+      ]);
+    } else {
+      return createBrowserRouter([
+        {
           path: "/",
           element: <Login />,
         },
-    {
-      path: "*",
-      element: <NotFound />,
-    },
-  ]);
+        {
+          path: "*",
+          element: <NotFound />,
+        },
+      ]);
+    }
+  }, [isAuth, isPending]);
+
   return <RouterProvider router={router} />;
 }
 
