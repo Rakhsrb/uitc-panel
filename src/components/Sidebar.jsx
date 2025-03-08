@@ -1,11 +1,4 @@
-import {
-  Books,
-  Circuitry,
-  Command,
-  SignOut,
-  UserCircleGear,
-  Users,
-} from "@phosphor-icons/react";
+import { SignOut } from "@phosphor-icons/react";
 import React from "react";
 import { NavLink } from "react-router-dom";
 
@@ -14,32 +7,27 @@ export const Sidebar = () => {
     {
       to: "/admins",
       title: "ADMINLAR",
-      icon: <UserCircleGear weight="bold" />,
     },
     {
       to: "/courses",
       title: "KURSLAR",
-      icon: <Books weight="bold" />,
     },
     {
       to: "/projects",
       title: "PORTFOLIO",
-      icon: <Circuitry weight="bold" />,
     },
     {
       to: "/services",
       title: "XIZMATLAR",
-      icon: <Command weight="bold" />,
     },
     {
       to: "/team",
       title: "XODIMLAR",
-      icon: <Users weight="bold" />,
     },
   ];
 
   return (
-    <aside className="relative">
+    <aside className="relative shadow-lg">
       <ul className="flex flex-col">
         {navLinks.map((item, index) => (
           <li key={index + 1}>
@@ -47,7 +35,7 @@ export const Sidebar = () => {
               to={item.to}
               className="flex items-center gap-2 text-blue-800 opacity-70 text-xl p-5 font-bold"
             >
-              {item.title} {item.icon}
+              {item.title}
             </NavLink>
           </li>
         ))}

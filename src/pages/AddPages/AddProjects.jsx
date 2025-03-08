@@ -91,7 +91,7 @@ const EditProject = () => {
   };
 
   return (
-    <section className="bg-[#ecfeff] flex flex-col justify-center items-center overflow-auto py-32">
+    <section className="bg-blue-50 flex flex-col justify-center items-center overflow-auto py-32">
       <form
         onSubmit={handleFormSubmit}
         className="border p-10 rounded-md bg-white"

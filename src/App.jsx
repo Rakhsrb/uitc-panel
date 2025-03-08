@@ -9,11 +9,7 @@ import AddServices from "./pages/AddPages/AddServices";
 import AddWorker from "./pages/AddPages/AddWorker";
 import { Admins } from "./pages/Admins";
 import { Courses } from "./pages/Courses";
-import Admin from "./pages/Details/Admin";
-import Course from "./pages/Details/Course";
 import { Project } from "./pages/Details/Project";
-import Service from "./pages/Details/Service";
-import Worker from "./pages/Details/Worker";
 import EditAdmin from "./pages/EditPages/EditAdmin";
 import EditCourse from "./pages/EditPages/EditCourse";
 import EditProject from "./pages/EditPages/EditProject";
@@ -24,7 +20,7 @@ import NotFound from "./pages/NotFound";
 import { Projects } from "./pages/Projects";
 import { Services } from "./pages/Services";
 import { Team } from "./pages/Team";
-import { Axios } from "./Axios";
+import { Axios } from "./middlewares/Axios";
 import {
   getUserError,
   getUserPending,
@@ -32,14 +28,13 @@ import {
 } from "./toolkit/UserSlicer";
 function App() {
   const { isAuth } = useSelector((state) => state.user);
-  const { config } = useSelector((state) => state.mainSlice);
   const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         dispatch(getUserPending());
-        const { data } = await Axios.get("admin/me", config);
+        const { data } = await Axios.get("admin/me");
         dispatch(getUserSuccess(data.data));
       } catch (error) {
         dispatch(getUserError(""));
@@ -126,24 +121,8 @@ function App() {
             },
             // Details
             {
-              path: "/project/:id",
+              path: "/projects/:id",
               element: <Project />,
-            },
-            {
-              path: "/admin/:id",
-              element: <Admin />,
-            },
-            {
-              path: "/course/:id",
-              element: <Course />,
-            },
-            {
-              path: "/service/:id",
-              element: <Service />,
-            },
-            {
-              path: "/worker/:id",
-              element: <Worker />,
             },
           ],
         }

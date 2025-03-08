@@ -1,10 +1,9 @@
 import { Eye, EyeClosed } from "@phosphor-icons/react";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import axios from "axios";
+import { Axios } from "../middlewares/Axios";
 
 const Login = () => {
-  const { baseUrlApi } = useSelector((state) => state.mainSlice);
   const { isAuth } = useSelector((state) => state.user);
 
   const [isPending, setIsPending] = useState(false);
@@ -34,11 +33,8 @@ const Login = () => {
     e.preventDefault();
     try {
       setIsPending(true);
-      const response = await axios.post(
-        `${baseUrlApi}api/admin/login`,
-        formData
-      );
-      localStorage.setItem("token", response.data.token);
+      const response = await Axios.post(`admin/login`, formData);
+      localStorage.setItem("uitctoken", response.data.token);
       window.location.href = "/";
     } catch (error) {
       setError(error.response.data.message || "login error");
