@@ -5,6 +5,10 @@ import { NavLink } from "react-router-dom";
 export const Sidebar = () => {
   const navLinks = [
     {
+      to: "/",
+      title: "KARUSEL",
+    },
+    {
       to: "/admins",
       title: "ADMINLAR",
     },

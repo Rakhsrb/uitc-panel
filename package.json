@@ -17,7 +17,8 @@
     "react-dom": "^18.2.0",
     "react-redux": "^9.1.1",
     "react-router-dom": "^6.23.0",
-    "sweetalert2": "^11.10.8"
+    "sweetalert2": "^11.10.8",
+    "swr": "^2.3.3"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",

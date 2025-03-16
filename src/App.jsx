@@ -27,6 +27,7 @@ import {
   getUserSuccess,
 } from "./toolkit/UserSlicer";
 import { Loading } from "./pages/Loading";
+import Carousel from "./pages/Carousel";
 function App() {
   const { isAuth, isPending } = useSelector((state) => state.user);
   const dispatch = useDispatch();
@@ -61,7 +62,7 @@ function App() {
           children: [
             {
               index: true,
-              element: <Projects />,
+              element: <Carousel />,
             },
             {
               path: "/courses",
