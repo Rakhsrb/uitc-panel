@@ -9,7 +9,6 @@ import AddServices from "./pages/AddPages/AddServices";
 import AddWorker from "./pages/AddPages/AddWorker";
 import { Admins } from "./pages/Admins";
 import { Courses } from "./pages/Courses";
-import { Project } from "./pages/Details/Project";
 import EditAdmin from "./pages/EditPages/EditAdmin";
 import EditCourse from "./pages/EditPages/EditCourse";
 import EditProject from "./pages/EditPages/EditProject";
@@ -129,11 +128,6 @@ function App() {
             {
               path: "*",
               element: <NotFound />,
-            },
-            // Details
-            {
-              path: "/projects/:id",
-              element: <Project />,
             },
           ],
         },

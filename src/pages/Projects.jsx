@@ -143,13 +143,6 @@ export const Projects = () => {
                         <td className="py-2 px-6">
                           <div className="flex justify-center items-center gap-3">
                             <Link
-                              to={`/projects/${elem._id}`}
-                              className="p-2 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-full transition-colors"
-                              title="View Project"
-                            >
-                              <Eye size={20} weight="bold" />
-                            </Link>
-                            <Link
                               to={`/edit-portfolio/${elem._id}`}
                               className="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-full transition-colors"
                               title="Edit Project"
