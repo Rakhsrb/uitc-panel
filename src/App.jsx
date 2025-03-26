@@ -1,6 +1,11 @@
-import React, { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import {
+  RouterProvider,
+  createBrowserRouter,
+  Navigate,
+  Outlet,
+} from "react-router-dom";
 import { RootLayout } from "./layout/RootLayout";
 import AddAdmin from "./pages/AddPages/AddAdmin";
 import AddCourses from "./pages/AddPages/AddCourses";
@@ -27,8 +32,28 @@ import {
 } from "./toolkit/UserSlicer";
 import { Loading } from "./pages/Loading";
 import Carousel from "./pages/Carousel";
-function App() {
+
+const ProtectedRoute = () => {
   const { isAuth, isPending } = useSelector((state) => state.user);
+
+  if (isPending) {
+    return <Loading />;
+  }
+
+  return isAuth ? <Outlet /> : <Navigate to="/" replace />;
+};
+
+const PublicRoute = () => {
+  const { isAuth, isPending } = useSelector((state) => state.user);
+
+  if (isPending) {
+    return <Loading />;
+  }
+
+  return isAuth ? <Navigate to="/" replace /> : <Outlet />;
+};
+
+function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -44,17 +69,10 @@ function App() {
     fetchData();
   }, [dispatch]);
 
-  const router = useMemo(() => {
-    if (isPending) {
-      return createBrowserRouter([
-        {
-          path: "/",
-          element: <Loading />,
-        },
-      ]);
-    }
-    if (isAuth) {
-      return createBrowserRouter([
+  const router = createBrowserRouter([
+    {
+      element: <ProtectedRoute />,
+      children: [
         {
           path: "/",
           element: <RootLayout />,
@@ -64,87 +82,87 @@ function App() {
               element: <Carousel />,
             },
             {
-              path: "/courses",
+              path: "courses",
               element: <Courses />,
             },
             {
-              path: "/services",
+              path: "services",
               element: <Services />,
             },
             {
-              path: "/projects",
+              path: "projects",
               element: <Projects />,
             },
             {
-              path: "/admins",
+              path: "admins",
               element: <Admins />,
             },
             {
-              path: "/team",
+              path: "team",
               element: <Team />,
             },
-            //add paths
+            // add paths
             {
-              path: "/add-admin",
+              path: "add-admin",
               element: <AddAdmin />,
             },
             {
-              path: "/add-course",
+              path: "add-course",
               element: <AddCourses />,
             },
             {
-              path: "/add-portfolio",
+              path: "add-portfolio",
               element: <AddProjects />,
             },
             {
-              path: "/add-service",
+              path: "add-service",
               element: <AddServices />,
             },
             {
-              path: "/add-worker",
+              path: "add-worker",
               element: <AddWorker />,
             },
-            //edit paths
+            // edit paths
             {
-              path: "/edit-admin/:id",
+              path: "edit-admin/:id",
               element: <EditAdmin />,
             },
             {
-              path: "/edit-course/:id",
+              path: "edit-course/:id",
               element: <EditCourse />,
             },
             {
-              path: "/edit-portfolio/:id",
+              path: "edit-portfolio/:id",
               element: <EditProject />,
             },
             {
-              path: "/edit-service/:id",
+              path: "edit-service/:id",
               element: <EditService />,
             },
             {
-              path: "/edit-worker/:id",
+              path: "edit-worker/:id",
               element: <EditWorker />,
-            },
-            {
-              path: "*",
-              element: <NotFound />,
             },
           ],
         },
-      ]);
-    } else {
-      return createBrowserRouter([
+      ],
+    },
+    // Public routes
+    {
+      element: <PublicRoute />,
+      children: [
         {
-          path: "/",
+          path: "/login",
           element: <Login />,
         },
-        {
-          path: "*",
-          element: <NotFound />,
-        },
-      ]);
-    }
-  }, [isAuth, isPending]);
+      ],
+    },
+    // Catch-all route
+    {
+      path: "*",
+      element: <NotFound />,
+    },
+  ]);
 
   return <RouterProvider router={router} />;
 }
