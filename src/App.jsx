@@ -40,7 +40,7 @@ const ProtectedRoute = () => {
     return <Loading />;
   }
 
-  return isAuth ? <Outlet /> : <Navigate to="/" replace />;
+  return isAuth ? <Outlet /> : <Navigate to="/login" replace />;
 };
 
 const PublicRoute = () => {
