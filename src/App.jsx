@@ -60,8 +60,8 @@ function App() {
     const fetchData = async () => {
       try {
         dispatch(getUserPending());
-        const { data } = await Axios.get("admin/me");
-        dispatch(getUserSuccess(data.data));
+        const response = await (await Axios.get("admin/me")).data;
+        dispatch(getUserSuccess(response.data.data));
       } catch (error) {
         dispatch(getUserError(""));
       }
