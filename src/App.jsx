@@ -9,7 +9,7 @@ import {
 import { RootLayout } from "./layout/RootLayout";
 import AddAdmin from "./pages/AddPages/AddAdmin";
 import AddCourses from "./pages/AddPages/AddCourses";
-import AddProjects from "./pages/AddPages/AddProjects";
+import AddProject from "./pages/AddPages/AddProjects";
 import AddServices from "./pages/AddPages/AddServices";
 import AddWorker from "./pages/AddPages/AddWorker";
 import { Admins } from "./pages/Admins";
@@ -60,8 +60,8 @@ function App() {
     const fetchData = async () => {
       try {
         dispatch(getUserPending());
-        const response = await (await Axios.get("admin/me")).data;
-        dispatch(getUserSuccess(response.data.data));
+        const response = await Axios.get("admin/me");
+        dispatch(getUserSuccess(response.data));
       } catch (error) {
         dispatch(getUserError(""));
       }
@@ -101,9 +101,8 @@ function App() {
               path: "team",
               element: <Team />,
             },
-            // add paths
             {
-              path: "add-admin",
+              path: "admins/new",
               element: <AddAdmin />,
             },
             {
@@ -112,7 +111,7 @@ function App() {
             },
             {
               path: "add-portfolio",
-              element: <AddProjects />,
+              element: <AddProject />,
             },
             {
               path: "add-service",
@@ -147,7 +146,6 @@ function App() {
         },
       ],
     },
-    // Public routes
     {
       element: <PublicRoute />,
       children: [
@@ -157,7 +155,6 @@ function App() {
         },
       ],
     },
-    // Catch-all route
     {
       path: "*",
       element: <NotFound />,

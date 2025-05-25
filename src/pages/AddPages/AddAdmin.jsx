@@ -1,8 +1,9 @@
 import { Eye, EyeClosed } from "@phosphor-icons/react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Axios } from "../../middlewares/Axios";
+import PageTitle from "../../components/PageTitle";
 
 const AddAdmin = () => {
   const [showPass, setShowPass] = useState(false);
@@ -33,7 +34,7 @@ const AddAdmin = () => {
       password: adminData.password,
     };
     try {
-      const response = await Axios.post("admin/create", adminForm);
+      await Axios.post("admin/create", adminForm);
       setAdminData({
         name: "",
         email: "",
@@ -46,9 +47,9 @@ const AddAdmin = () => {
   };
 
   return (
-    <section className="bg-[#ecfeff] flex flex-col justify-center items-center">
-      <form className="border p-10 rounded-md bg-white" onSubmit={AddNewAdmin}>
-        <h1 className="text-4xl font-semibold mb-7">Yangi admin qo'shish</h1>
+    <section className="overflow-y-auto p-6">
+      <form onSubmit={AddNewAdmin}>
+        <PageTitle>Yangi admin yaratish</PageTitle>
         <div className="flex flex-col gap-5">
           <div className="flex flex-col gap-2">
             <label htmlFor="adminName" className="text-lg">

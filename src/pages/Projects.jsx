@@ -26,7 +26,7 @@ export const Projects = () => {
         const response = await Axios.get(
           `projects/?page=${page}&pageSize=${pageSize}`
         );
-        dispatch(getProjectsSuccess(response.data.data));
+        dispatch(getProjectsSuccess(response.data.projects));
         setTotalPages(Math.ceil(response.data.total / pageSize));
       } catch (error) {
         dispatch(getProjectsError());
