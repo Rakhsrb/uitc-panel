@@ -1,41 +1,31 @@
 import { Eye, EyeClosed } from "@phosphor-icons/react";
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Axios } from "../../middlewares/Axios";
 import PageTitle from "../../components/PageTitle";
+import Button from "../../components/Button";
 
 const AddAdmin = () => {
   const [showPass, setShowPass] = useState(false);
-  const { isAuth } = useSelector((state) => state.user);
+  const navigate = useNavigate();
 
-  const [adminData, setAdminData] = useState({
+  const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
   });
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (!isAuth) {
-      navigate("/");
-    }
-  }, []);
 
-  const handleGetValues = (e) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setAdminData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const AddNewAdmin = async (e) => {
     e.preventDefault();
-    const adminForm = {
-      name: adminData.name,
-      email: adminData.email,
-      password: adminData.password,
-    };
+
     try {
-      await Axios.post("admin/create", adminForm);
-      setAdminData({
+      await Axios.post("admin/create", formData);
+      setFormData({
         name: "",
         email: "",
         password: "",
@@ -47,21 +37,21 @@ const AddAdmin = () => {
   };
 
   return (
-    <section className="overflow-y-auto p-6">
+    <section className="overflow-y-auto p-6 bg-blue-50">
       <form onSubmit={AddNewAdmin}>
-        <PageTitle>Yangi admin yaratish</PageTitle>
-        <div className="flex flex-col gap-5">
+        <PageTitle className="text-center">Yangi admin</PageTitle>
+        <div className="space-y-5 bg-white border mt-8 p-6 rounded-lg">
           <div className="flex flex-col gap-2">
             <label htmlFor="adminName" className="text-lg">
-              Ism kiriting:
+              To'liq ism kiriting:
             </label>
             <input
               required
-              value={adminData.name || ""}
-              onChange={handleGetValues}
-              placeholder="Ism Kiriting"
+              value={formData.name || ""}
+              onChange={handleInputChange}
+              placeholder="Suhrob Rahmatullayev"
               type="text"
-              className="border py-2 px-5 text-md"
+              className="border py-2 px-5 text-md rounded-lg"
               id="adminName"
               name="name"
             />
@@ -72,11 +62,11 @@ const AddAdmin = () => {
             </label>
             <input
               required
-              value={adminData.email || ""}
-              onChange={handleGetValues}
+              value={formData.email || ""}
+              onChange={handleInputChange}
               placeholder="Email kiriting"
               type="email"
-              className="border py-2 px-5 text-md"
+              className="border py-2 px-5 text-md rounded-lg"
               id="adminEmail"
               name="email"
             />
@@ -85,11 +75,11 @@ const AddAdmin = () => {
             <label htmlFor="adminPassword" className="text-lg">
               Parol
             </label>
-            <div className="border py-1 px-5 text-lg flex items-center gap-3">
+            <div className="border py-1 px-5 text-lg flex items-center gap-3 rounded-lg">
               <input
                 required
-                value={adminData.password || ""}
-                onChange={handleGetValues}
+                value={formData.password || ""}
+                onChange={handleInputChange}
                 type={showPass ? "text" : "password"}
                 placeholder="Parol kiriting"
                 className="outline-none w-full"
@@ -105,13 +95,8 @@ const AddAdmin = () => {
               </span>
             </div>
           </div>
+          <Button>Yaratish</Button>
         </div>
-        <button
-          type="submit"
-          className="py-2 bg-green-700 px-10 mt-10 w-full rounded-sm text-white uppercase font-medium"
-        >
-          Qo'shish
-        </button>
       </form>
     </section>
   );

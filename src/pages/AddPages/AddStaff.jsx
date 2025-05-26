@@ -1,30 +1,17 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Axios } from "../../middlewares/Axios";
 import PageTitle from "../../components/PageTitle";
 import Button from "../../components/Button";
 
-const EditStaff = () => {
+const AddStaff = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
   const [imgSaved, setImgSaved] = useState(false);
   const [workerData, setWorkerData] = useState({
     name: "",
     job: "",
     image: "",
   });
-
-  useEffect(() => {
-    async function getDataById() {
-      try {
-        const response = await Axios.get(`team/${id}`);
-        setWorkerData(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    getDataById();
-  }, [id]);
 
   const handleGetValues = (e) => {
     const { name, value } = e.target;
@@ -120,4 +107,4 @@ const EditStaff = () => {
   );
 };
 
-export default EditStaff;
+export default AddStaff;

@@ -1,5 +1,3 @@
-import { SignOut } from "@phosphor-icons/react";
-import React from "react";
 import { NavLink } from "react-router-dom";
 
 export const Sidebar = () => {
@@ -18,41 +16,42 @@ export const Sidebar = () => {
     },
     {
       to: "/projects",
-      title: "PORTFOLIO",
+      title: "LOYIHALAR",
     },
     {
       to: "/services",
       title: "XIZMATLAR",
     },
     {
-      to: "/team",
+      to: "/staffs",
       title: "XODIMLAR",
     },
   ];
 
+  const handleLogout = () => {
+    localStorage.clear();
+    window.location.href = "/";
+  };
+
   return (
     <aside className="relative shadow-lg">
-      <ul className="flex flex-col">
+      <ul className="flex flex-col gap-2 p-2">
         {navLinks.map((item, index) => (
           <li key={index + 1}>
             <NavLink
               to={item.to}
-              className="flex items-center gap-2 text-blue-800 opacity-70 text-xl p-5 font-bold"
+              className="flex items-center gap-2 text-blue-800 opacity-70 p-2 rounded-lg font-bold"
             >
               {item.title}
             </NavLink>
           </li>
         ))}
       </ul>
-
       <button
         className="absolute text-lg flex items-center gap-2 left-0 bottom-0 py-3 px-6"
-        onClick={() => {
-          localStorage.clear();
-          window.location.href = "/";
-        }}
+        onClick={handleLogout}
       >
-        Logout <SignOut />
+        Chiqish
       </button>
     </aside>
   );

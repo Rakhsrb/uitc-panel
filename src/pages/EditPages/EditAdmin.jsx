@@ -1,39 +1,35 @@
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Axios } from "../../middlewares/Axios";
+import PageTitle from "../../components/PageTitle";
+import { Eye, EyeClosed } from "@phosphor-icons/react";
+import Button from "../../components/Button";
 
 const EditAdmin = () => {
   const path = useNavigate();
   const { id } = useParams();
-  const [adminData, setAdminData] = useState({
+  const [showPass, setShowPass] = useState(false);
+  const [formData, setFormData] = useState({
     name: "",
     email: "",
+    password: "",
   });
 
-  const { isAuth } = useSelector((state) => state.user);
-
   useEffect(() => {
-    if (!isAuth) {
-      navigate("/");
-    }
-  }, []);
-
-  useEffect(() => {
-    async function getDataById() {
+    async function fetchData() {
       try {
         const response = await Axios.get(`admin/${id}`);
-        setAdminData(response.data.data);
+        setFormData({ ...response.data, password: "" });
       } catch (error) {
         console.log(error);
       }
     }
-    getDataById();
+    fetchData();
   }, [id]);
 
-  const getUpdatedValues = (e) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setAdminData((prevAdmin) => ({
+    setFormData((prevAdmin) => ({
       ...prevAdmin,
       [name]: value,
     }));
@@ -42,7 +38,7 @@ const EditAdmin = () => {
   const submitUpdatedInfo = async (e) => {
     e.preventDefault();
     try {
-      const response = await Axios.put(`admin/update/${id}`, adminData);
+      await Axios.put(`admin/update/${id}`, formData);
       path("/admins");
     } catch (error) {
       console.log(error);
@@ -50,28 +46,23 @@ const EditAdmin = () => {
   };
 
   return (
-    <section className="bg-[#ecfeff] flex flex-col justify-center items-center">
-      <form
-        className="border p-10 rounded-md bg-white"
-        onSubmit={submitUpdatedInfo}
-      >
-        <h1 className="text-4xl font-semibold mb-7">
-          Admin malumotlarini taxrirlash
-        </h1>
-        <div className="flex flex-col gap-5">
+    <section className="bg-blue-50 overflow-y-auto p-6">
+      <form onSubmit={submitUpdatedInfo}>
+        <PageTitle className={"text-center"}>Admin taxrirlash</PageTitle>
+        <div className="bg-white p-6 mt-8 space-y-5 border rounded-lg">
           <div className="flex flex-col gap-2">
             <label htmlFor="adminName" className="text-lg">
-              Ism kiriting:
+              To'liq ism kiriting:
             </label>
             <input
               required
-              placeholder="Ism Kiriting"
+              placeholder="Suhrob Rahmatullayev"
               type="text"
-              className="border py-2 px-5 text-md"
+              className="border py-2 px-5 text-md rounded-lg"
               id="adminName"
               name="name"
-              value={adminData.name}
-              onChange={getUpdatedValues}
+              value={formData.name}
+              onChange={handleInputChange}
             />
           </div>
           <div className="flex flex-col gap-2">
@@ -82,20 +73,39 @@ const EditAdmin = () => {
               required
               placeholder="Email kiriting"
               type="email"
-              className="border py-2 px-5 text-md"
+              className="border py-2 px-5 text-md rounded-lg"
               id="adminEmail"
               name="email"
-              value={adminData.email}
-              onChange={getUpdatedValues}
+              value={formData.email}
+              onChange={handleInputChange}
             />
           </div>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="adminPassword" className="text-lg">
+              Parol
+            </label>
+            <div className="border py-1 px-5 text-lg flex items-center gap-3 rounded-lg">
+              <input
+                required
+                value={formData.password}
+                onChange={handleInputChange}
+                type={showPass ? "text" : "password"}
+                placeholder="Parol kiriting"
+                className="outline-none w-full"
+                id="adminPassword"
+                name="password"
+              />
+              <span
+                onClick={() =>
+                  showPass ? setShowPass(false) : setShowPass(true)
+                }
+              >
+                {showPass ? <Eye /> : <EyeClosed />}
+              </span>
+            </div>
+          </div>
+          <Button>Taxrirlash</Button>
         </div>
-        <button
-          type="submit"
-          className="py-2 bg-green-700 px-10 mt-10 w-full rounded-sm text-white uppercase font-medium"
-        >
-          taxrirlash
-        </button>
       </form>
     </section>
   );

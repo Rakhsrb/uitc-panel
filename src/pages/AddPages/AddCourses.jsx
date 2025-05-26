@@ -1,30 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Axios } from "../../middlewares/Axios";
+import PageTitle from "../../components/PageTitle";
+import Button from "../../components/Button";
 
 const AddCourses = () => {
-  const { isAuth } = useSelector((state) => state.user);
-
-  const [imgSaved, setImgSaved] = useState(false);
-  const [courseData, setCourseData] = useState({
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
     title: "",
     description: "",
     image: "",
     price: "",
   });
 
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (!isAuth) {
-      navigate("/");
-    }
-  }, []);
-
-  const handleGetValues = (e) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setCourseData((prev) => ({ ...prev, [name]: value }));
-    setImgSaved(false);
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setIsLoading(false);
   };
 
   const handleFileChange = async (e) => {
@@ -32,13 +25,13 @@ const AddCourses = () => {
       const formImageData = new FormData();
       const file = e.target.files[0];
       formImageData.append("images", file);
-      setImgSaved(true);
-      const { data } = await Axios.post("upload", formImageData);
-      setCourseData((prevCourse) => ({
+      setIsLoading(true);
+      const response = await Axios.post("upload", formImageData);
+      setFormData((prevCourse) => ({
         ...prevCourse,
-        image: data.images[0],
+        image: response.data.images[0],
       }));
-      setImgSaved(false);
+      setIsLoading(false);
     } catch (err) {
       console.log(err);
     }
@@ -46,15 +39,9 @@ const AddCourses = () => {
 
   const addNewCourse = async (e) => {
     e.preventDefault();
-    const courseForm = {
-      title: courseData.title,
-      description: courseData.description,
-      image: courseData.image,
-      price: courseData.price,
-    };
     try {
-      const response = await Axios.post("courses/create", courseForm);
-      setCourseData({
+      await Axios.post("courses/create", formData);
+      setFormData({
         title: "",
         description: "",
         image: "",
@@ -67,73 +54,70 @@ const AddCourses = () => {
   };
 
   return (
-    <section className="bg-[#ecfeff] flex flex-col justify-center items-center">
-      <form className="border p-10 rounded-md bg-white" onSubmit={addNewCourse}>
-        <h1 className="text-4xl font-semibold mb-7">Yangi Kurs Qo'shish</h1>
-        <div className="flex flex-col gap-5">
+    <section className="bg-blue-50 overflow-y-auto p-6">
+      <form onSubmit={addNewCourse}>
+        <PageTitle className={"text-center"}>Yangi kurs</PageTitle>
+        <div className="space-y-8 mt-8 bg-white border p-6 rounded-lg">
           <div className="flex flex-col gap-2">
             <label htmlFor="courseTitle" className="text-lg">
-              Kurs Nomi:
+              Kurs Nomi
             </label>
             <input
-              value={courseData.title}
-              onChange={handleGetValues}
+              value={formData.title}
+              onChange={handleInputChange}
               placeholder="Kurs nomini kiriting"
               type="text"
-              className="border py-2 px-5 text-md"
+              className="border py-2 px-5 text-md rounded-lg"
               id="courseTitle"
               name="title"
             />
           </div>
           <div className="flex flex-col gap-2">
             <label htmlFor="courseDescription" className="text-lg">
-              Kurs haqida malumot:
+              Kurs haqida malumot
             </label>
             <textarea
-              value={courseData.description}
-              onChange={handleGetValues}
+              value={formData.description}
+              onChange={handleInputChange}
               placeholder="Kurs haqida malumot kiriting"
-              className="border py-2 px-5 text-md min-h-32"
+              className="border py-2 px-5 text-md min-h-32 rounded-lg"
               id="courseDescription"
               name="description"
             ></textarea>
           </div>
           <div className="flex flex-col gap-2">
             <label htmlFor="coursePrice" className="text-lg">
-              Kurs narxi:
+              Kurs narxi
             </label>
             <input
-              value={courseData.price}
-              onChange={handleGetValues}
+              value={formData.price}
+              onChange={handleInputChange}
               type="number"
               placeholder="Kurs narxini kiriting"
-              className="border py-1 px-5 text-lg "
+              className="border py-1 px-5 text-lg rounded-lg"
               id="coursePrice"
               name="price"
             />
           </div>
           <div className="flex flex-col gap-2">
             <label htmlFor="courseImage" className="text-lg">
-              Rasm:
+              Rasm
             </label>
             <input
               type="file"
-              className="border py-1 px-5 text-lg "
+              className="border py-1 px-5 text-lg rounded-lg"
               id="courseImage"
               name="image"
               onChange={handleFileChange}
             />
           </div>
+          <Button
+            disabled={isLoading}
+            className={isLoading ? "opacity-50" : ""}
+          >
+            {isLoading ? "Yuklanmoqda..." : "Yaratish"}
+          </Button>
         </div>
-        <button
-          type="submit"
-          disabled={imgSaved}
-          className={`py-2 px-10 mt-10 w-full rounded-sm text-white font-medium ${
-            imgSaved ? "bg-green-900" : "bg-green-700"
-          }`}
-        >
-          {imgSaved ? "Loading..." : "Qo'shish"}
-        </button>
       </form>
     </section>
   );

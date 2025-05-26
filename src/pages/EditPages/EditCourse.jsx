@@ -1,29 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Axios } from "../../middlewares/Axios";
+import LoadingAnimation from "../../components/LoadingAnimation";
+import PageTitle from "../../components/PageTitle";
+import Button from "../../components/Button";
 
 const EditCourse = () => {
   const path = useNavigate();
   const { id } = useParams();
-  const [imgSaved, setImgSaved] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isPending, setIsPending] = useState(false);
   const [courseData, setCourseData] = useState({});
-
-  const { isAuth } = useSelector((state) => state.user);
-
-  useEffect(() => {
-    if (!isAuth) {
-      navigate("/");
-    }
-  }, []);
 
   useEffect(() => {
     async function getDataById() {
       try {
         setIsPending(true);
         const response = await Axios.get(`courses/${id}`);
-        setCourseData(response.data.data);
+        setCourseData(response.data);
         setIsPending(false);
       } catch (error) {
         setIsPending(false);
@@ -33,25 +27,25 @@ const EditCourse = () => {
     getDataById();
   }, [id]);
 
-  const getUpdatedValues = (e) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
     setCourseData((prevProject) => ({
       ...prevProject,
       [name]: value,
     }));
-    setImgSaved(false);
+    setIsLoading(false);
   };
 
-  const submitUpdatedInfo = async (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      setImgSaved(true);
-      const response = await Axios.put(`courses/update/${id}`, courseData);
+      setIsLoading(true);
+      await Axios.put(`courses/update/${id}`, courseData);
       path("/courses");
-      setImgSaved(false);
     } catch (error) {
-      setImgSaved(false);
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -60,36 +54,31 @@ const EditCourse = () => {
       const formImageData = new FormData();
       const file = e.target.files[0];
       formImageData.append("images", file);
-      setImgSaved(true);
+      setIsLoading(true);
       const { data } = await Axios.post("upload", formImageData);
       setCourseData((prevCourse) => ({
         ...prevCourse,
         image: data.images[0],
       }));
-      setImgSaved(false);
+      setIsLoading(false);
     } catch (err) {
       console.log(err);
     }
   };
 
   return (
-    <section className="bg-[#ecfeff] flex flex-col justify-center items-center">
+    <section className="bg-blue-50 overflow-y-auto p-6">
       {isPending ? (
-        <div className="h-[30vh] flex items-center justify-center">
-          <h1>Loading...</h1>
-        </div>
+        <LoadingAnimation>Kurs yuklanmoqda</LoadingAnimation>
       ) : (
-        <form
-          className="border p-10 rounded-md bg-white"
-          onSubmit={submitUpdatedInfo}
-        >
-          <h1 className="text-4xl font-semibold mb-7">
+        <form onSubmit={handleFormSubmit}>
+          <PageTitle className={"text-center"}>
             Kursning malumotlarini taxrirlash
-          </h1>
-          <div className="flex flex-col gap-5">
+          </PageTitle>
+          <div className="bg-white space-y-8 mt-8 p-6">
             <div className="flex flex-col gap-2">
               <label htmlFor="courseTitle" className="text-lg">
-                Kurs Nomi:
+                Kurs Nomi
               </label>
               <input
                 required
@@ -98,13 +87,13 @@ const EditCourse = () => {
                 className="border py-2 px-5 text-md"
                 id="courseTitle"
                 value={courseData.title}
-                onChange={getUpdatedValues}
+                onChange={handleInputChange}
                 name="title"
               />
             </div>
             <div className="flex flex-col gap-2">
               <label htmlFor="courseDescription" className="text-lg">
-                Kurs haqida malumot:
+                Kurs haqida malumot
               </label>
               <textarea
                 required
@@ -112,13 +101,13 @@ const EditCourse = () => {
                 className="border py-2 px-5 text-md min-h-32"
                 id="courseDescription"
                 value={courseData.description}
-                onChange={getUpdatedValues}
+                onChange={handleInputChange}
                 name="description"
               ></textarea>
             </div>
             <div className="flex flex-col gap-2">
               <label htmlFor="coursePrice" className="text-lg">
-                Kurs narxi:
+                Kurs narxi
               </label>
               <input
                 required
@@ -128,12 +117,12 @@ const EditCourse = () => {
                 id="price"
                 name="price"
                 value={courseData.price}
-                onChange={getUpdatedValues}
+                onChange={handleInputChange}
               />
             </div>
             <div className="flex flex-col gap-2">
               <label htmlFor="courseImage" className="text-lg">
-                Rasm:
+                Rasm
               </label>
               <input
                 type="file"
@@ -143,14 +132,13 @@ const EditCourse = () => {
                 onChange={handleFileChange}
               />
             </div>
+            <Button
+              disabled={isLoading}
+              className={isLoading ? "opacity-50" : ""}
+            >
+              {isLoading ? "Loading..." : "Taxrirlash"}
+            </Button>
           </div>
-          <button
-            type="submit"
-            disabled={imgSaved}
-            className="py-2 bg-green-700 px-10 mt-10 w-full rounded-sm text-white font-medium"
-          >
-            {imgSaved ? "Loading..." : "Taxrirlash"}
-          </button>
         </form>
       )}
     </section>

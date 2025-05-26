@@ -55,16 +55,16 @@ export const Admins = () => {
       </div>
 
       {isPending ? (
-        <LoadingAnimation>Loading adminstrators...</LoadingAnimation>
+        <LoadingAnimation>Adminstratorlar yuklanmoqda...</LoadingAnimation>
       ) : isError ? (
         <ErrorTitle>{isError}</ErrorTitle>
       ) : data.length === 0 ? (
         <NoDataTitle>Adminstratorlar yo'q</NoDataTitle>
       ) : (
-        <table className="w-full bg-white border">
+        <table className="w-full bg-white">
           <thead>
             <tr className="bg-blue-100 text-blue-700">
-              <th className="py-4 px-6 text-left font-semibold">Name</th>
+              <th className="py-4 px-6 text-left font-semibold">Ism</th>
               <th className="py-4 px-6 text-left font-semibold">Email</th>
               <th className="py-4 px-6 text-center font-semibold">Actions</th>
             </tr>
@@ -82,7 +82,7 @@ export const Admins = () => {
                 <td className="py-3 px-6">
                   <div className="flex items-center justify-center gap-2">
                     <Link
-                      to={`/edit-admin/${admin._id}`}
+                      to={`/admins/edit/${admin._id}`}
                       className="px-2 py-2 text-blue-700 rounded-full hover:bg-blue-100 transition-colors inline-flex items-center"
                     >
                       <Pencil size={20} weight="bold" />

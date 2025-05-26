@@ -1,30 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Axios } from "../../middlewares/Axios";
+import PageTitle from "../../components/PageTitle";
+import Button from "../../components/Button";
 
 const EditService = () => {
-  const path = useNavigate();
+  const navigate = useNavigate();
   const { id } = useParams();
-  const [isPending, setIsPending] = useState(false);
+  const [imgSaved, setImgSaved] = useState(false);
   const [serviceData, setServiceData] = useState({
     title: "",
     description: "",
   });
 
-  const { isAuth } = useSelector((state) => state.user);
-
-  useEffect(() => {
-    if (!isAuth) {
-      navigate("/");
-    }
-  }, []);
-
   useEffect(() => {
     async function getDataById() {
       try {
-        const { data } = (await Axios.get(`services/${id}`)).data;
-        setServiceData(data);
+        const response = await Axios.get(`services/${id}`);
+        setServiceData(response.data);
       } catch (error) {
         console.log(error);
       }
@@ -32,74 +25,65 @@ const EditService = () => {
     getDataById();
   }, [id]);
 
-  const getUpdatedValues = (e) => {
+  const handleGetValues = async (e) => {
     const { name, value } = e.target;
-    setServiceData((prevProject) => ({
-      ...prevProject,
-      [name]: value,
-    }));
+    setServiceData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const submitUpdatedInfo = async (e) => {
+  const sendService = async (e) => {
     e.preventDefault();
-    setIsPending(true);
     try {
-      const response = await Axios.put(`services/update/${id}`, serviceData);
-      path("/services");
+      setImgSaved(true);
+      await Axios.post("services/create", serviceData);
+      setServiceData({
+        title: "",
+        description: "",
+      });
+      setImgSaved(false);
+      navigate("/services");
     } catch (error) {
       console.log(error);
-    } finally {
-      setIsPending(false);
     }
   };
-
   return (
-    <section className="bg-[#ecfeff] flex flex-col justify-center items-center">
+    <section className="bg-blue-50 overflow-y-auto p-6">
+      <PageTitle className={"text-center"}>Xizmatni taxrirlash</PageTitle>
       <form
-        className="border p-10 rounded-md bg-white"
-        onSubmit={submitUpdatedInfo}
+        onSubmit={sendService}
+        className="mt-8 bg-white p-6 border rounded-lg"
       >
-        <h1 className="text-4xl font-semibold mb-7">
-          Xizmat malumotlarini taxrirlash
-        </h1>
-        <div className="flex flex-col gap-5">
+        <div className="space-y-8">
           <div className="flex flex-col gap-2">
             <label htmlFor="serviceTitle" className="text-lg">
-              Xizmat Nomi:
+              Xizmat Nomi
             </label>
             <input
-              required
               placeholder="Xizmat nomini kiriting"
               type="text"
-              className="border py-2 px-5 text-md"
+              className="border py-2 px-5 text-md rounded-lg"
               id="serviceTitle"
               name="title"
-              value={serviceData.title}
-              onChange={getUpdatedValues}
+              value={serviceData.title || ""}
+              onChange={handleGetValues}
             />
           </div>
           <div className="flex flex-col gap-2">
             <label htmlFor="serviceDescription" className="text-lg">
-              Xizmat haqida malumot:
+              Xizmat haqida malumot
             </label>
             <textarea
-              required
               placeholder="Xizmat haqida malumot kiriting"
-              className="border py-2 px-5 text-md min-h-32"
+              className="border py-2 px-5 text-md min-h-32 rounded-lg"
               id="serviceDescription"
+              onChange={handleGetValues}
+              value={serviceData.description || ""}
               name="description"
-              value={serviceData.description}
-              onChange={getUpdatedValues}
-            ></textarea>
+            />
           </div>
+          <Button disabled={imgSaved} className={imgSaved ? "opacity-50" : ""}>
+            {imgSaved ? "Taxrirlanmoqda..." : "Taxrirlash"}
+          </Button>
         </div>
-        <button
-          disabled={isPending}
-          type="submit"
-          className="py-2 bg-green-700 px-10 mt-10 w-full rounded-sm text-white font-medium"
-        >
-          {isPending ? "Loading..." : "Taxrirlash"}
-        </button>
       </form>
     </section>
   );
