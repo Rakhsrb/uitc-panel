@@ -3,27 +3,29 @@ import { useNavigate } from "react-router-dom";
 import { Axios } from "../../middlewares/Axios";
 import PageTitle from "../../components/PageTitle";
 import Button from "../../components/Button";
+import ButtonRed from "../../components/ButtonRed";
 
 const AddStaff = () => {
   const navigate = useNavigate();
-  const [imgSaved, setImgSaved] = useState(false);
-  const [workerData, setWorkerData] = useState({
+  const [imageLoading, setImageLoading] = useState(false);
+  const [isPending, setIsPending] = useState(false);
+  const [formData, setFormData] = useState({
     name: "",
     job: "",
     image: "",
   });
 
-  const handleGetValues = (e) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setWorkerData((prev) => ({ ...prev, [name]: value }));
-    setImgSaved(false);
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const sendWorker = async (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
+    setIsPending(true);
     try {
-      await Axios.post("team/create", workerData);
-      setWorkerData({
+      await Axios.post("team/create", formData);
+      setFormData({
         name: "",
         job: "",
         image: "",
@@ -31,6 +33,8 @@ const AddStaff = () => {
       navigate("/staffs");
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsPending(false);
     }
   };
 
@@ -39,16 +43,26 @@ const AddStaff = () => {
       const formImageData = new FormData();
       const file = e.target.files[0];
       formImageData.append("images", file);
-      setImgSaved(true);
+      setImageLoading(true);
       const { data } = await Axios.post("upload", formImageData);
-      setWorkerData((prevWorker) => ({
+      setFormData((prevWorker) => ({
         ...prevWorker,
         image: data.images[0],
       }));
-      setImgSaved(false);
     } catch (err) {
       console.log(err);
-      setImgSaved(false);
+    } finally {
+      setImageLoading(false);
+    }
+  };
+
+  const handleRemoveImage = async (image) => {
+    try {
+      const response = await Axios.post("/removeFile", { image });
+      setFormData((prevData) => ({ ...prevData, image: "" }));
+      alert(response.data.message);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -57,15 +71,15 @@ const AddStaff = () => {
       <PageTitle className={"text-center"}>Yangi xodim qo'shish</PageTitle>
       <form
         className="border p-6 rounded-lg bg-white mt-8 space-y-8"
-        onSubmit={(e) => sendWorker(e)}
+        onSubmit={(e) => handleFormSubmit(e)}
       >
         <div className="flex flex-col gap-2">
           <label htmlFor="workerName" className="text-lg">
             Ism kiriting
           </label>
           <input
-            value={workerData.name || ""}
-            onChange={handleGetValues}
+            value={formData.name || ""}
+            onChange={handleInputChange}
             placeholder="Ism Kiriting"
             type="text"
             className="border py-2 px-5 text-md rounded-lg"
@@ -78,8 +92,8 @@ const AddStaff = () => {
             Ishi
           </label>
           <input
-            value={workerData.job || ""}
-            onChange={handleGetValues}
+            value={formData.job || ""}
+            onChange={handleInputChange}
             placeholder="Ish kiriting"
             type="text"
             className="border py-2 px-5 text-md rounded-lg"
@@ -87,20 +101,50 @@ const AddStaff = () => {
             name="job"
           />
         </div>
-        <div className="flex flex-col gap-2">
-          <label htmlFor="workerImage" className="text-lg">
-            Rasmi
-          </label>
-          <input
-            onChange={handleFileChange}
-            type="file"
-            className="border py-1 px-5 text-lg rounded-lg"
-            id="workerImage"
-            name="image"
-          />
-        </div>
-        <Button disabled={imgSaved} className={imgSaved ? "opacity-50" : ""}>
-          {imgSaved ? "Yaratilmoqda..." : "Yaratish"}
+        {!formData.image && (
+          <div className="flex flex-col gap-2">
+            <label htmlFor="courseImage" className="text-lg">
+              Rasm
+            </label>
+            <input
+              type="file"
+              id="courseImage"
+              name="image"
+              onChange={handleFileChange}
+            />
+          </div>
+        )}
+        {imageLoading && (
+          <div className="bg-blue-200 py-2 text-center text-blue-600 font-medium border-2 rounded-lg border-blue-600">
+            <h1>Rasm yuklanmoqda</h1>
+          </div>
+        )}
+        {formData.image && !imageLoading ? (
+          <div className="space-y-2">
+            <h3 className="text-lg">Yulkangan rasm</h3>
+            <div className="relative w-full md:w-1/2 mx-auto">
+              <img
+                src={formData.image}
+                alt={formData.title}
+                className="h-[300px] object-cover w-full"
+              />
+              <ButtonRed
+                event={() => handleRemoveImage(formData.image)}
+                type="button"
+                className="absolute right-2 top-2"
+              >
+                <X />
+              </ButtonRed>
+            </div>
+          </div>
+        ) : (
+          <h2 className="text-center text-lg opacity-60">Rasm tanlanmagan</h2>
+        )}
+        <Button
+          disabled={isPending || imageLoading}
+          className={isPending ? "opacity-50" : ""}
+        >
+          {isPending ? "Yaratilmoqda..." : "Yaratish"}
         </Button>
       </form>
     </section>

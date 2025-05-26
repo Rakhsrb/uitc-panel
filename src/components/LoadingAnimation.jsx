@@ -1,6 +1,6 @@
-function LoadingAnimation({children}) {
+function LoadingAnimation({ children }) {
   return (
-    <div className="py-20 flex flex-col items-center justify-center">
+    <div className="h-screen flex flex-col items-center justify-center">
       <div className="flex justify-center items-center space-x-2 mb-4">
         <div
           className="w-4 h-4 rounded-full bg-blue-400 animate-bounce"
@@ -15,7 +15,7 @@ function LoadingAnimation({children}) {
           style={{ animationDelay: "0.3s" }}
         ></div>
       </div>
-      <p className="text-blue-600">{children}</p>
+      <p className="text-blue-600 uppercase font-bold">{children}</p>
     </div>
   );
 }

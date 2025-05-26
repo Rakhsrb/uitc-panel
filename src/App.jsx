@@ -25,8 +25,8 @@ import {
   getUserPending,
   getUserSuccess,
 } from "./toolkit/UserSlicer";
-import { Loading } from "./pages/Loading";
 import Carousel from "./pages/Carousel";
+import LoadingAnimation from "./components/LoadingAnimation";
 
 function App() {
   const { isAuth, isPending } = useSelector((state) => state.user);
@@ -46,7 +46,7 @@ function App() {
   }, [dispatch]);
 
   if (isPending) {
-    return <Loading />;
+    return <LoadingAnimation>Sahifa yuklanmoqda</LoadingAnimation>;
   }
 
   const privateRoutes = [

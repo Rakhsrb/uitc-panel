@@ -48,7 +48,7 @@ export const Sidebar = () => {
         ))}
       </ul>
       <button
-        className="absolute text-lg flex items-center gap-2 left-0 bottom-0 py-3 px-6"
+        className="absolute text-lg flex items-center gap-2 left-0 bottom-0 m-3"
         onClick={handleLogout}
       >
         Chiqish

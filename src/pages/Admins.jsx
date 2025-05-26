@@ -55,7 +55,7 @@ export const Admins = () => {
       </div>
 
       {isPending ? (
-        <LoadingAnimation>Adminstratorlar yuklanmoqda...</LoadingAnimation>
+        <LoadingAnimation>Adminstratorlar yuklanmoqda</LoadingAnimation>
       ) : isError ? (
         <ErrorTitle>{isError}</ErrorTitle>
       ) : data.length === 0 ? (
