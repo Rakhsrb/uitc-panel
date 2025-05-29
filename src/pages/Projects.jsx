@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import {
@@ -7,7 +7,7 @@ import {
   getProjectsPending,
   getProjectsSuccess,
 } from "../toolkit/Slicer";
-import { Eye, Pencil, Trash } from "@phosphor-icons/react";
+import { Pencil, Trash } from "@phosphor-icons/react";
 import { Axios } from "../middlewares/Axios";
 import PageTitle from "../components/PageTitle";
 import Button from "../components/Button";

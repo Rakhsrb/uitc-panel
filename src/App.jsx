@@ -13,7 +13,7 @@ import EditAdmin from "./pages/EditPages/EditAdmin";
 import EditCourse from "./pages/EditPages/EditCourse";
 import EditProject from "./pages/EditPages/EditProject";
 import EditService from "./pages/EditPages/EditServices";
-import EditWorker from "./pages/EditPages/EditWorker";
+import EditStaff from "./pages/EditPages/EditStaff";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import { Projects } from "./pages/Projects";
@@ -116,7 +116,7 @@ function App() {
         },
         {
           path: "staffs/edit/:id",
-          element: <EditWorker />,
+          element: <EditStaff />,
         },
         { path: "*", element: <NotFound /> },
       ],

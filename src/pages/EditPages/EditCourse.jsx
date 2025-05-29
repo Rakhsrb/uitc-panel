@@ -69,6 +69,10 @@ const EditCourse = () => {
     }
   };
 
+  if (isLoading) {
+    return <LoadingAnimation>Sahifa yuklanmoqda</LoadingAnimation>;
+  }
+
   return (
     <section className="bg-blue-50 overflow-y-auto p-6">
       {isPending ? (

@@ -1,20 +1,38 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Axios } from "../../middlewares/Axios";
 import PageTitle from "../../components/PageTitle";
 import Button from "../../components/Button";
 import ButtonRed from "../../components/ButtonRed";
 import { X } from "@phosphor-icons/react";
+import LoadingAnimation from "../../components/LoadingAnimation";
 
-const AddStaff = () => {
+const EditStaff = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   const [imageLoading, setImageLoading] = useState(false);
   const [isPending, setIsPending] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     job: "",
     image: "",
   });
+
+  useEffect(() => {
+    async function getDataById() {
+      setIsLoading(true);
+      try {
+        const response = await Axios.get(`team/${id}`);
+        setFormData(response.data);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    getDataById();
+  }, [id]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -25,7 +43,7 @@ const AddStaff = () => {
     e.preventDefault();
     setIsPending(true);
     try {
-      await Axios.post("team/create", formData);
+      await Axios.put(`team/update/${id}`, formData);
       setFormData({
         name: "",
         job: "",
@@ -57,19 +75,13 @@ const AddStaff = () => {
     }
   };
 
-  const handleRemoveImage = async (image) => {
-    try {
-      const response = await Axios.post("/removeFile", { image });
-      setFormData((prevData) => ({ ...prevData, image: "" }));
-      alert(response.data.message);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  if (isLoading) {
+    return <LoadingAnimation>Sahifa yuklanmoqda</LoadingAnimation>;
+  }
 
   return (
     <section className="bg-blue-50 overflow-y-auto p-6">
-      <PageTitle className={"text-center"}>Yangi xodim qo'shish</PageTitle>
+      <PageTitle className={"text-center"}>Xodimni taxrirlash</PageTitle>
       <form
         className="border p-6 rounded-lg bg-white mt-8 space-y-8"
         onSubmit={(e) => handleFormSubmit(e)}
@@ -121,22 +133,21 @@ const AddStaff = () => {
           </div>
         )}
         {formData.image && !imageLoading ? (
-          <div className="space-y-2">
-            <h3 className="text-lg">Yulkangan rasm</h3>
-            <div className="relative w-full md:w-1/2 mx-auto">
-              <img
-                src={formData.image}
-                alt={formData.title}
-                className="h-[300px] object-cover w-full"
-              />
-              <ButtonRed
-                event={() => handleRemoveImage(formData.image)}
-                type="button"
-                className="absolute right-2 top-2"
-              >
-                <X />
-              </ButtonRed>
-            </div>
+          <div className="relative w-full md:w-1/2 mx-auto">
+            <img
+              src={formData.image}
+              alt={formData.title}
+              className="h-[300px] object-cover w-full"
+            />
+            <ButtonRed
+              event={() =>
+                setFormData((prevData) => ({ ...prevData, image: "" }))
+              }
+              type="button"
+              className="absolute right-2 top-2"
+            >
+              <X />
+            </ButtonRed>
           </div>
         ) : (
           <h2 className="text-center text-lg opacity-60">Rasm tanlanmagan</h2>
@@ -152,4 +163,4 @@ const AddStaff = () => {
   );
 };
 
-export default AddStaff;
+export default EditStaff;
